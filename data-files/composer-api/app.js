@@ -14,8 +14,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/composers', indexRouter);
+app.use('/api/composers', indexRouter); //<-register routes
+//when registering route, the first param is the location where the resources are stored. The second param maps the url to the desired module.
 
+//middleware error handling:
 app.use((req, res, next) => {
   next(createError(404));
 })
