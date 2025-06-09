@@ -307,6 +307,8 @@ export class MainLayoutComponent {
   salesReports = [
     { name: 'Sales by Region', url: '/reports/sales/sales-by-region' },
     { name: 'Sales by Region - Tabular', url: '/reports/sales/sales-by-region-tabular' },
+    { name: 'Sales by Month', url: '/reports/sales/sales-by-month'},
+    { name: 'Sales by Product', url: '/reports/sales/sales-by-product'}
     // Add more reports as needed
   ];
 

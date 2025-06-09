@@ -78,4 +78,88 @@ router.get('/regions/:region', (req, res, next) => {
   }
 });
 
+router.get('/sales-by-month', (req, res, next) => {
+  try {
+    const month = req.query.month;
+
+    if (!month) {
+      return res.status(400).send('Month parameter is missing');
+    }
+
+    mongo (async db => {
+      const salesByMonth = await db.collection('sales').aggregate([
+        {
+          $match: {
+            $expr: {
+              $eq: [ { $month: '$date' }, parseInt(month) ]
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            id: '$_id',
+            month: { $dateToString: { format: '%B', date: '$date' } },
+            region: 1,
+            product: 1,
+            category: 1,
+            customer: 1,
+            salesperson: 1,
+            channel: 1,
+            amount: 1
+          }
+        }
+      ]).toArray();
+
+      res.send(salesByMonth);
+    }, next);
+
+  } catch (err) {
+    console.error('Error getting sales data by month: ', err);
+    next(err);
+  }
+});
+
+router.get('/sales-by-product', (req, res, next) => {
+  try {
+    const product = req.query.product;
+
+    if (!product) {
+      return res.status(400).send('Product parameter is missing');
+    }
+
+    mongo (async db => {
+      const salesByProduct = await db.collection('sales').aggregate([
+        {
+          $match: {
+            $expr: {
+              $eq: [ { $product: '$date' }, parseInt(product) ]
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            id: '$_id',
+            month: { $dateToString: { format: '%B', date: '$date' } },
+            region: 1,
+            product: 1,
+            category: 1,
+            customer: 1,
+            salesperson: 1,
+            channel: 1,
+            amount: 1
+          }
+        }
+      ]).toArray();
+
+      res.send(salesByProduct);
+    }, next);
+
+  } catch (err) {
+    console.error('Error getting sales data by product: ', err);
+    next(err);
+  }
+});
+
 module.exports = router;
