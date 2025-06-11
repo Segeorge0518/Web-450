@@ -49,7 +49,7 @@ import { environment } from '../../../../environments/environment';
       </form>
 
       <!-- div to display the data -->
-      <div *ngIf="salesData.length > 0">
+      @if (salesData.length > 0) {
         <div class="card chart-card">
           <app-table
             [title]="'Sales for ' + selectedProduct"
@@ -58,13 +58,14 @@ import { environment } from '../../../../environments/environment';
             >
           </app-table>
         </div>
-      </div>
+      }
     </div>
   `,
   styles: ``
 })
 export class SalesByProductComponent {
   salesData: any[] = [];
+  products: any[] = [];
 
   readonly productNames = [
     '', 'Portable Projector', 'Laptop Pro 15', 'Smartphone X', 'Office Chair Deluxe', '4K TV', 'Gaming Console', 'Bluetooth Headphones', 'Smartwatch Series 5', 'Wireless Mouse', 'Electric Kettle', 'Air Purifier', 'Fitness Tracker', 'Digital Camera', 'Laptop Pro 13', 'Tablet S', 'Smart Thermostat', 'Bluetooth Speaker', 'Electric Toothbrush', 'Smart Light Bulb', 'Wireless Charger', 'Noise Cancelling Headphones', 'Smart Door Lock'

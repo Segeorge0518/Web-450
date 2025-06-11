@@ -130,13 +130,7 @@ router.get('/sales-by-product', (req, res, next) => {
 
     mongo (async db => {
       const salesByProduct = await db.collection('sales').aggregate([
-        {
-          $match: {
-            $expr: {
-              $eq: [ { $product: '$date' }, parseInt(product) ]
-            }
-          }
-        },
+        { $match: { product: req.params.product } },
         {
           $project: {
             _id: 0,

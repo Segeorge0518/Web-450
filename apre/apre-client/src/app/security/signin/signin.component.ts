@@ -21,11 +21,11 @@ import { CookieService } from 'ngx-cookie-service';
       <form [formGroup]="signinForm" (ngSubmit)="signin();" class="signin__form">
         <div class="signin__form-group">
           <label for="username" class="signin__label">Username</label>
-          <input id="username" formControlName="username" type="text" class="signin__input" />
+          <input id="username" placeholder="Enter your username" formControlName="username" type="text" class="signin__input" /> <!-- Added placeholder for username input -->
         </div>
         <div class="signin__form-group">
           <label for="password" class="signin__label">Password</label>
-          <input id="password" formControlName="password" type="password" class="signin__input" />
+          <input id="password" placeholder="Enter your password" formControlName="password" type="password" class="signin__input" /> <!-- Added placeholder for password input -->
         </div>
         <input type="submit" class="signin__button" Value="Submit" />
       </form>
