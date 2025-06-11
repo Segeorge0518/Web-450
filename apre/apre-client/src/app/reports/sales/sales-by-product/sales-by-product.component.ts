@@ -54,7 +54,7 @@ import { environment } from '../../../../environments/environment';
           <app-table
             [title]="'Sales for ' + selectedProduct"
             [data]="salesData"
-            [headers]="['region', 'product', 'category', 'salesperson', 'channel', 'amount']"
+            [headers]="['region', 'category', 'salesperson', 'channel', 'amount']"
             >
           </app-table>
         </div>
