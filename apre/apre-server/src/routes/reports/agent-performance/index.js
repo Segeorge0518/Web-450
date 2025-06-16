@@ -115,18 +115,24 @@ router.get('/performanceByYear', (req, res, next) => {
     }
 
     mongo(async db => {
+      // Project year for debug
+      const debug = await db.collection('agentPerformance').aggregate([
+        { $project: { year: { $year: "$date" }, agentId: 1 } }
+      ]).toArray();
+      console.log('Year projection:', debug);
+
       const performanceByYear = await db.collection('agentPerformance').aggregate([
         {
           $match: {
             $expr: {
-              $eq: [{$year: '$date'}, parseInt(year)]
+              $eq: [ { $year: '$date' }, Number(year) ]
             }
           }
         },
         {
           $project: {
             _id: 0,
-            agentId: 1, // keep as agentId (not agentID) to match DB
+            agentId: 1,
             region: 1,
             team: 1,
             performanceMetrics: 1,
@@ -137,11 +143,11 @@ router.get('/performanceByYear', (req, res, next) => {
         }
       ]).toArray();
 
-      res.json(performanceByYear); // You must return the data to the client!
+      res.json(performanceByYear);
     }, next);
 
   } catch (err) {
-    console.error ('Could not get requested data: ', err);
+    console.error('Could not get requested data: ', err);
     next(err);
   }
 });

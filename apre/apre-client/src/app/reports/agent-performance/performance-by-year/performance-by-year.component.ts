@@ -35,7 +35,10 @@ import { TableComponent } from '../../../shared/table/table.component';
           <app-table
             [title]="'Performance for ' + selectedYear"
             [data]="performanceData"
-            [headers]="['agentID', 'performanceMetrics', 'callDuration', 'resolutionTime', 'customerFeedback']"
+            [headers]="headers"
+            [sortableColumns]="headers"
+            [recordsPerPage]="10"
+            [headerBackground]="'primary'"
           >
           </app-table>
         </div>
@@ -47,33 +50,41 @@ import { TableComponent } from '../../../shared/table/table.component';
 export class PerformanceByYearComponent {
   yearForm: FormGroup;
   performanceData: any[] = [];
-  selectedYear: number = 0;
+  selectedYear: string = '';
+  // Map backend field names to headers as used in table.component.ts
+  headers: string[] = ['agentId', 'performanceMetrics', 'callDuration', 'resolutionTime', 'customerFeedback'];
 
-  constructor(
-    private fb: FormBuilder,
-    private http: HttpClient
-  ) {
+  constructor(private fb: FormBuilder, private http: HttpClient) {
     this.yearForm = this.fb.group({
-      year: ['', Validators.required]
+      year: ['', Validators.required],
     });
   }
 
   onSubmit(): void {
-    const year = this.yearForm.value.year;
-    if (!year) return;
-    this.selectedYear = year;
-    this.http.get<any[]>(`/api/performanceByYear?year=${year}`).subscribe({
-      next: (data: any[]) => {
-        this.performanceData = data.map(item => ({
-          agentID: item.agentId, // <-- fix: use agentId from API, mapped to agentID for table header
-          performanceMetrics: item.performanceMetrics?.join(', ') || '',
-          callDuration: item.callDuration,
-          resolutionTime: item.resolutionTime,
-          customerFeedback: item.customerFeedback?.join(', ') || '',
+    if (this.yearForm.valid) {
+      const year = this.yearForm.value.year;
+      this.selectedYear = year;
+      this.getPerformanceByYear(year);
+    }
+  }
+
+  getPerformanceByYear(year: string): void {
+    // Adjust the API URL as needed for your environment
+    this.http.get<any[]>(`/api/reports/agent-performance/performanceByYear?year=${year}`).subscribe({
+      next: (data) => {
+        // Ensure the data has the correct property names expected by the table (agentId vs agentID)
+        this.performanceData = (data || []).map(row => ({
+          agentId: row.agentId,
+          performanceMetrics: row.performanceMetrics,
+          callDuration: row.callDuration,
+          resolutionTime: row.resolutionTime,
+          customerFeedback: row.customerFeedback,
         }));
       },
-      error: () => {
+      error: (err) => {
+        // Handle API error (optional)
         this.performanceData = [];
+        alert('Failed to fetch performance data');
       }
     });
   }
