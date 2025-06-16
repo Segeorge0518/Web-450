@@ -1,6 +1,6 @@
 # IDE extensions
 .vscode
-*/*/.vscode 
+*/*/.vscode
 .vscode/*
 .idea/*
 *.iml
@@ -12,3 +12,7 @@ node_module
 # macOS
 .DS_Store
 */.DS_Store
+Sara George - apre week 2 major task.zip
+Sara George - apre week 2 minor task.zip
+Sara George - apre week 3 minor task.zip
+apre/Sara George - apre week 3 major task.zip

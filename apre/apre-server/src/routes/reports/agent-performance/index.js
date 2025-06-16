@@ -93,4 +93,58 @@ router.get('/call-duration-by-date-range', (req, res, next) => {
   }
 });
 
+router.get('/team', (req, res, next) => {
+  try {
+    mongo (async db => {
+      const team = await db.collection('agentPerformance').distinct('team');
+      res.send(teams);
+    }, next);
+  } catch (err) {
+    console.error('Error getting teams: ', err);
+    next(err);
+  }
+});
+
+
+router.get('/performanceByYear', (req, res, next) => {
+  try {
+    const year = req.query.year;
+
+    if (!year) {
+      return res.status(400).send('Year parameter is missing');
+    }
+
+    mongo(async db => {
+      const performanceByYear = await db.collection('agentPerformance').aggregate([
+        {
+          $match: {
+            $expr: {
+              $eq: [{$year: '$date'}, parseInt(year)]
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            agentId: 1, // keep as agentId (not agentID) to match DB
+            region: 1,
+            team: 1,
+            performanceMetrics: 1,
+            customerFeedback: 1,
+            callDuration: 1,
+            resolutionTime: 1
+          }
+        }
+      ]).toArray();
+
+      res.json(performanceByYear); // You must return the data to the client!
+    }, next);
+
+  } catch (err) {
+    console.error ('Could not get requested data: ', err);
+    next(err);
+  }
+});
+
 module.exports = router;
+

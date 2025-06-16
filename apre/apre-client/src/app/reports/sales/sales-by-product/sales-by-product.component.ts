@@ -18,14 +18,14 @@ import { environment } from '../../../../environments/environment';
           <label for="product">Select Product:</label>
           <select class="select" formControlName="product" id="product" name="product" request>
             <option value="" disabled selected>Select a product</option>
-            <option value="1">Portable Projector</option>
-            <option value="2">Laptop Pro 15</option>
-            <option value="3">Smartphone X</option>
-            <option value="4">Office Chair Deluxe</option>
-            <option value="5">4K TV</option>
-            <option value="6">Gaming Console</option>
-            <option value="7">Bluetooth Headphones</option>
-            <option value="8">Smartwatch Series 5</option>
+            <option value="Portable Projector">Portable Projector</option>
+            <option value="Laptop Pro 15">Laptop Pro 15</option>
+            <option value="Smartphone X">Smartphone X</option>
+            <option value="Office Chair Deluxe">Office Chair Deluxe</option>
+            <option value="4K TV">4K TV</option>
+            <option value="Gaming Console">Gaming Console</option>
+            <option value="Bluetooth Headphones">Bluetooth Headphones</option>
+            <option value="Smartwatch Series 5">Smartwatch Series 5</option>
             <option value="9">Wireless Mouse</option>
             <option value="10">Electric Kettle</option>
             <option value="11">Air Purifier</option>
@@ -89,7 +89,7 @@ export class SalesByProductComponent {
 
     this.http.get(`${environment.apiBaseUrl}/reports/sales/sales-by-product?product=${selectedProduct}`).subscribe({
       next: (data) => {
-        this.salesData = data as any[];
+        this.products = data as any[];
       },
       error: (err) => {
         console.error('Error fetching data from server: ', err);
