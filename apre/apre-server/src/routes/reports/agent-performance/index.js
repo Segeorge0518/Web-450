@@ -106,23 +106,30 @@ router.get('/team', (req, res, next) => {
 });
 
 
+// This endpoint retrieves agent performance data for a specific year.
 router.get('/performanceByYear', (req, res, next) => {
   try {
+    // Extract the 'year' query parameter from the request
     const year = req.query.year;
 
+    // If no year is provided, return a 400 Bad Request error
     if (!year) {
       return res.status(400).send('Year parameter is missing');
     }
 
+    // Use the 'mongo' helper to perform database operations
     mongo(async db => {
-      // Project year for debug
+      // Debug: Project the year from each document's 'date' field for verification
       const debug = await db.collection('agentPerformance').aggregate([
         { $project: { year: { $year: "$date" }, agentId: 1 } }
       ]).toArray();
+      // Log the projected year values for debugging purposes
       console.log('Year projection:', debug);
 
+      // Aggregate agent performance documents that match the requested year
       const performanceByYear = await db.collection('agentPerformance').aggregate([
         {
+          // Match documents where the year part of 'date' equals the requested year
           $match: {
             $expr: {
               $eq: [ { $year: '$date' }, Number(year) ]
@@ -130,6 +137,7 @@ router.get('/performanceByYear', (req, res, next) => {
           }
         },
         {
+          // Project only the relevant fields, exclude '_id'
           $project: {
             _id: 0,
             agentId: 1,
@@ -143,10 +151,12 @@ router.get('/performanceByYear', (req, res, next) => {
         }
       ]).toArray();
 
+      // Respond with the filtered performance data in JSON format
       res.json(performanceByYear);
     }, next);
 
   } catch (err) {
+    // Handle any unexpected errors
     console.error('Could not get requested data: ', err);
     next(err);
   }

@@ -48,18 +48,26 @@ import { TableComponent } from '../../../shared/table/table.component';
   styles: ``
 })
 export class PerformanceByYearComponent {
+  // Form group for selecting the year
   yearForm: FormGroup;
+
+  // Array to hold agent performance data retrieved from the API
   performanceData: any[] = [];
+
+  // Currently selected year, used for displaying and querying data
   selectedYear: string = '';
-  // Map backend field names to headers as used in table.component.ts
+
+  // Table headers, mapping backend field names to those expected by table.component.ts
   headers: string[] = ['agentId', 'performanceMetrics', 'callDuration', 'resolutionTime', 'customerFeedback'];
 
+  // Constructor injects FormBuilder for building reactive forms and HttpClient for API calls by initializing the form group with a required 'year' field
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.yearForm = this.fb.group({
       year: ['', Validators.required],
     });
   }
 
+  // Called when the year form is submitted, only when the code is valid. The selected year is stored by this.selectedYear line and then the this.getPerformanceByYear line.
   onSubmit(): void {
     if (this.yearForm.valid) {
       const year = this.yearForm.value.year;
@@ -68,11 +76,13 @@ export class PerformanceByYearComponent {
     }
   }
 
+  // Fetch agent performance data for a given year from the backend API
   getPerformanceByYear(year: string): void {
-    // Adjust the API URL as needed for your environment
+    // Adjust the API URL as necessary depending on your environment
     this.http.get<any[]>(`/api/reports/agent-performance/performanceByYear?year=${year}`).subscribe({
+      // On successful API response
       next: (data) => {
-        // Ensure the data has the correct property names expected by the table (agentId vs agentID)
+        // Map each row to ensure property names match those expected by the table
         this.performanceData = (data || []).map(row => ({
           agentId: row.agentId,
           performanceMetrics: row.performanceMetrics,
@@ -81,8 +91,8 @@ export class PerformanceByYearComponent {
           customerFeedback: row.customerFeedback,
         }));
       },
+      // If there' an API error, show an error alert
       error: (err) => {
-        // Handle API error (optional)
         this.performanceData = [];
         alert('Failed to fetch performance data');
       }

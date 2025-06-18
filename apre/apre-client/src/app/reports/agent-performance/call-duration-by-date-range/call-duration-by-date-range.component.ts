@@ -25,7 +25,7 @@ import { environment } from '../../../../environments/environment';
           </div>
         </div>
         <div class="calendar-form__actions">
-          <button class="button button--primary" (click)="fetchPerformanceData()">Submit</button>
+          <button class="button button--secondary" (click)="fetchPerformanceData()">Submit</button>
         </div>
       </div>
 
