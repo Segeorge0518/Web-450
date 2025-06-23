@@ -92,4 +92,54 @@ router.get('/channel-rating-by-month', (req, res, next) => {
   }
 });
 
+router.get('/salesperson', (req, res, next) => {
+  try {
+    mongo(async db => {
+      const salespersons = await db.collection('customerFeedback').distinct('salesperson');
+      res.send(salespersons);
+    }, next);
+  } catch (err) {
+    console.error('An error occurred while retrieving a list of salespersons: ', err);
+  }
+});
+
+router.get('/feedback-by-salesperson', (req, res, next) => {
+  try {
+    const salesperson = req.query.salesperson;
+
+    if (!salesperson) {
+      return next(createError(400, 'salesperson is required'));
+    }
+
+    mongo (async db => {
+      const feedbackBySalespersonData = await db.collection('customerFeedback').aggregate([
+        {
+          $match: {
+            salesperson: salesperson
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            region: 1,
+            category: 1,
+            salesperson: 1,
+            customer: 1,
+            feedbackType: 1,
+            feedbackText: 1,
+            feedbackSource: 1,
+            feedbackStatus: 1
+          }
+        }
+      ]).toArray();
+
+      res.send(feedbackBySalespersonData);
+    });
+  } catch (err) {
+    console.error('Error occurred while retrieving customer feedback by Salesperson data: ', err);
+  }
+});
+
+
+
 module.exports = router;
